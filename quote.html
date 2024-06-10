@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClubView Tours</title>
+    <!-- Add your CSS links here -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Add any other CSS files you're using -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    
+</head>
+<body>
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="#" class="nav__logo">ClubView</a>
+        </nav>
+    </header>
+
+    <form id="quoteForm" id="quote">
+        <!-- Personal Details -->
+        <div class="container" id="quote__container">
+        <div class="Personal__details" id="personal">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <!-- Trip Details -->
+        <div class="Trip__details hidden">
+            <label for="destination">Desired destination:</label>
+            <select id="destination" name="destination">
+                <option value="Suncity">Sun-City</option>
+                <option value="BelaBela">Bela-Bela</option>
+                <option value="Harties">Hartbees Port Damn</option>
+                <option value="Durban">Durban</option>
+                <option value="Cape Town">Cape Town</option>
+                <option value="Knysna">Knysna</option>
+                <option value="Mozambique">Mozambique</option>
+                <option value="Namibia">Namibia</option>
+                <option value="Kasane">Kasane</option>
+                <option vale="Victoriafalls">Victoria Falls</option>
+                <option value="Otherbw">Other (within Botswana)</option>
+                <option value="OtherSA">Other (South Africa)</option>
+            </select>
+            <label for="activities">Include activities:</label>
+            <select id="activities" name="activities">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            <div id="activities-options" style="display: none;">
+                <!-- Additional options related to activities can be added here -->
+            </div>
+            <label for="breakfast">Include Breakfast:</label>
+            <select id="breakfast" name="breakfast">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            <div id="breakfast-options" style="display: none;">
+                <!-- Additional options related to breakfast can be added here -->
+            </div>
+            <label for="nights">Nights:</label>
+            <select id="nights" name="nights">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+            </select>
+            <label for="prefer">Prefer:</label>
+            <select id="prefer" name="prefer">
+                <option value="lodge">Lodge</option>
+                <option value="bed/breakfast">Bed and Breakfast</option>
+                <option value="hotel">Hotel</option>
+            </select>
+            <label for="people">Number of people:</label>
+            <input type="number" id="people" name="people" required>
+
+            <label for="sharing">Sharing:</label>
+            <select id="sharing" name="sharing">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+    
+        <!-- Total Cost -->
+        <div id="totalCost"></div>
+
+        <button type="submit">Generate Quote</button>
+    </div>
+    </form>
+
+    <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const activitiesSelect = document.getElementById('activities');
+    const breakfastSelect = document.getElementById('breakfast');
+    const destinationSelect = document.getElementById('destination');
+    const nightsSelect = document.getElementById('nights');
+    const preferSelect = document.getElementById('prefer');
+    const sharingSelect = document.getElementById('sharing');
+    const peopleInput = document.getElementById('people');
+    const totalCostDisplay = document.getElementById('totalCost');
+
+    // Add event listeners to detect changes in user selections
+    activitiesSelect.addEventListener('change', updateForm);
+    breakfastSelect.addEventListener('change', updateForm);
+    destinationSelect.addEventListener('change', updateForm);
+    nightsSelect.addEventListener('change', updateForm);
+    preferSelect.addEventListener('change', updateForm);
+    sharingSelect.addEventListener('change', updateForm);
+    peopleInput.addEventListener('input', updateForm);
+
+    // Function to update the form based on user selections
+    function updateForm() {
+        // Show/hide additional form fields based on user selections
+        if (activitiesSelect.value === 'yes') {
+            // Show additional options related to activities
+            document.getElementById('activities-options').style.display = 'block';
+        } else {
+            // Hide additional options related to activities
+            document.getElementById('activities-options').style.display = 'none';
+        }
+
+        if (breakfastSelect.value === 'yes') {
+            // Show additional options related to breakfast
+            document.getElementById('breakfast-options').style.display = 'block';
+        } else {
+            // Hide additional options related to breakfast
+            document.getElementById('breakfast-options').style.display = 'none';
+        }
+
+        // Calculate total cost based on user selections
+        calculateTotal();
+    }
+
+    // Function to calculate the total cost based on user selections
+    function calculateTotal() {
+        // Retrieve form data
+        var destination = document.getElementById('destination').value;
+        var activities = document.getElementById('activities').value;
+        var breakfast = document.getElementById('breakfast').value;
+        var nights = document.getElementById('nights').value;
+        var prefer = document.getElementById('prefer').value;
+        var sharing = document.getElementById('sharing').value;
+        var people = document.getElementById('people').value;
+
+        // Perform calculations
+        var destinationPrice = 0;
+        switch (destination) {
+            case 'SunCity':
+                destinationPrice = 2200
+                break;
+            case 'BelaBela':
+                destinationPrice = 2100
+                break;
+            case 'Harties':
+                destinationPrice = 2100
+            case 'Durban':
+            case 'Cape Town':
+                destinationPrice = 2700;
+                break;
+            case 'Knysna':
+                destinationPrice = 2500;
+                break;
+            case 'Mozambique':
+                destinationPrice = 2000;
+                break;
+            case 'Namibia':
+                destinationPrice = 2850;
+                break;
+            case 'Kasane':
+                destinationPrice = 2850;
+                break;
+            case 'Victoria':
+                destinationPrice = 2850;
+                break;
+            case 'Otherbw':
+            case 'OtherSA':
+                destinationPrice = 2500;
+                break;
+            default:
+                destinationPrice = 0;
+        }
+
+        var breakfastPrice = breakfast === 'yes' ? 300 : 0;
+
+        var nightsPrice = parseInt(nights) || 0;
+
+        var preferTotal = 0;
+        switch (prefer) {
+            case 'lodge':
+                preferTotal = 650;
+                break;
+            case 'bed/breakfast':
+                preferTotal = 700;
+                break;
+            case 'hotel':
+                preferTotal = 800;
+                break;
+            default:
+                preferTotal = 0;
+        }
+
+        var sharingTotal = sharing === 'yes' ? 0.85 : 1;
+
+        var activitiesTotal = activities === 'yes' ? 300 : 0;
+
+        var additionalCostForLessThan9People = people  < 9 ? 8000 : 0;
+        
+        // Calculate total
+        // Calculate total
+        var total = ((((destinationPrice + preferTotal + breakfastPrice + activitiesTotal) * nightsPrice) * people) + additionalCostForLessThan9People) * sharingTotal;
+
+        // Display total
+        totalCostDisplay.textContent = 'Total: $' + total.toFixed(2);
+
+        // Optionally, you can generate PDF or save quote details to a database here
+    }
+    // Event listener for form submission
+    document.getElementById('quoteForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent form submission
+                calculateTotal(); // Calculate total before saving or generating PDF
+                generatePDF(); // Generate PDF
+            });
+
+            // Function to generate PDF
+            function generatePDF() {
+                // Placeholder implementation - Open a new window with sample content
+                var pdfContent = '<h1>Generated PDF Content</h1>';
+                var newWindow = window.open('', '_blank');
+                newWindow.document.write(pdfContent);
+
+                // Create a new jsPDF instance
+    var doc = new jsPDF();
+
+// Sample data for the PDF
+var data = [
+    ['Name', 'Destination', 'Total Cost'],
+    ['John Doe', 'Sun-City', '$2500'],
+    ['Jane Smith', 'Cape Town', '$3000'],
+    // Add more data rows here
+];
+
+// Set column widths
+var columnWidths = [50, 75, 50];
+
+// Set row heights
+var rowHeight = 10;
+
+// Set initial y position for the grid
+var y = 20;
+
+// Loop through each row of data
+data.forEach(function(row) {
+    // Set initial x position for the grid
+    var x = 10;
+
+    // Loop through each cell in the row
+    row.forEach(function(cell, index) {
+        // Add cell to the PDF
+        doc.text(x, y, cell);
+
+        // Move to the next column
+        x += columnWidths[index];
+    });
+
+    // Move to the next row
+    y += rowHeight;
+});
+
+// Save the PDF
+doc.save('quote.pdf');
+            }
+
+    // Initial update of the form when the page loads
+    updateForm();
+});
+
+    </script>
+</body>
+</html>
